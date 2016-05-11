@@ -1,0 +1,200 @@
+<html>
+	<head>
+		<title>Week 12 Lab Example</title>
+	</head>
+	<body>
+		<canvas width="800" height="600"></canvas>
+		
+<script>
+	var pickups = [];
+	var activePU = 0; // index of active pickup in array
+	var player = { img:null, x:0, y:0, speed:10 };
+
+	var canvas = document.querySelector("canvas");
+	var surface = canvas.getContext("2d");
+	var uIval;
+	var leftPressed = false;
+	var rightPressed = false;
+	var upPressed = false;
+	var downPressed = false;
+	
+	var frameCtr = 0; //Gets incrimented per frame
+	var ctrMax = 3; // Number of frames per image
+	var frameIdx = 0; // Current Image to display
+	var idxMax = 2; // Number of images
+	
+	window.addEventListener("keydown", onKeyDown);
+	window.addEventListener("keyup", onKeyUp);
+		
+	initGame();
+	
+	function initGame()
+	{
+		player.img = new Image();
+		player.img.src = "blobR.png";
+		player.x = canvas.width/2;
+		player.y = canvas.height/2;
+		for (var i = 0; i < 5; i++)
+		{
+			var tempPU = { img:null, x:0, y:0, active:false };
+			tempPU.img = new Image();
+			tempPU.img.src = "pickup.png";
+			tempPU.x = Math.floor(Math.random() * 737);
+			tempPU.y = Math.floor(Math.random() * 537);
+			pickups.push(tempPU);
+		}
+		pickups[activePU].active = true;
+		uIval = setInterval(update, 33.34);
+	}
+	
+	function onKeyDown(event)
+	{
+		switch(event.keyCode)
+		{
+			case 65: //a
+				leftPressed = true;
+				break;
+			case 68: //d
+				rightPressed = true;
+				break;
+			case 87: //w
+				upPressed = true;
+				break;
+			case 83: //s
+				downPressed = true;
+				break;	
+		}
+	}
+	
+	function onKeyUp(event)
+	{
+		switch(event.keyCode)
+		{
+			case 65: //a
+				leftPressed = false;
+				break;
+			case 68: //d
+				rightPressed = false;
+				break;
+			case 87: //w
+				upPressed = false;
+				break;
+			case 83: //s
+				downPressed = false;
+				break;	
+		}
+	}
+	
+	function update()
+	{
+		movePlayer();
+		animatePlayer();
+		checkCollision();
+		render();
+	}
+	
+	function movePlayer()
+	{
+		if (leftPressed == true)
+			player.x -= player.speed;
+		else if (rightPressed == true)
+			player.x += player.speed;
+		if (upPressed == true)
+			player.y -= player.speed;
+		else if (downPressed == true)
+			player.y += player.speed;
+	}
+	
+	function animatePlayer()
+	{
+		if (rightPressed)
+		{
+		player.img.src = "blobR.png";
+			if (frameCtr == ctrMax)
+			{
+				frameCtr = 0;
+				frameIdx++;
+				if (frameIdx == idxMax)
+					frameIdx = 0;
+			}
+			frameCtr++;
+		}
+		else if (leftPressed)
+		{
+		player.img.src = "blobL.png";
+			if (frameCtr == ctrMax)
+			{
+				frameCtr = 0;
+				frameIdx++;
+				if (frameIdx == idxMax)
+					frameIdx = 0;
+			}
+			frameCtr++;
+		}
+		else if (upPressed)
+		{
+		player.img.src = "blobU.png";
+			if (frameCtr == ctrMax)
+			{
+				frameCtr = 0;
+				frameIdx++;
+				if (frameIdx == idxMax)
+					frameIdx = 0;
+			}
+			frameCtr++;
+		}
+		else if (downPressed)
+		{
+		player.img.src = "blobD.png";
+			if (frameCtr == ctrMax)
+			{
+				frameCtr = 0;
+				frameIdx++;
+				if (frameIdx == idxMax)
+					frameIdx = 0;
+			}
+			frameCtr++;
+		}
+		
+	}
+	function checkCollision()
+	{
+		for (var i = 0; i < pickups.length; i++)
+		{
+			if (!(player.y+64 < pickups[i].y || 
+				  player.y > pickups[i].y+64 ||
+				  player.x+64 < pickups[i].x ||
+				  player.x > pickups[i].x+64))
+			{ // Runs if colliding.
+				if (pickups[i].active == true)
+				{
+					activePU++;
+					if (activePU == 5)
+						activePU = 0;
+					pickups[activePU].active = true;
+					pickups[i].active = false;
+					break; // Breaks out of for.
+				}
+			}
+		}
+	}
+	
+	function render() 
+	{
+		surface.clearRect(0,0,canvas.width, canvas.height);
+		for (var i = 0; i < pickups.length; i++)
+		{
+			if (pickups[i].active == true)
+				surface.drawImage(pickups[i].img, pickups[i].x, pickups[i].y);
+		}
+		surface.drawImage(player.img, 
+								frameIdx*32,0,32,32, //src rect 
+								player.x, player.y, 64,64); //dest rect.
+	}
+	
+</script>
+
+</body>
+</html>
+
+
