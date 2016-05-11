@@ -1,0 +1,135 @@
+<html>
+	<head>
+		<title>EYes in the Yellow</title>
+	</head>
+	<body>
+		<canvas width="800" height="600"></canvas>
+		
+<script>
+	var player = { img:null, x:0, y:0, speed:2 };
+
+	var canvas = document.querySelector("canvas");
+	var surface = canvas.getContext("2d");
+	var uIval;
+	var leftPressed = false;
+	var rightPressed = false;
+	var upPressed = false;
+	var downPressed = false;
+	
+	var frameCtr = 0;  // Number of frames per sprite.
+	var ctrMax = 5;    // Max frames.
+	var spriteIdx = 0; // Sprite to display.
+	var idxMax = 4;	   // Max number of sprites.
+	
+	var LastLoc; //Nelson this is for you to help with direction, AZ
+	
+	window.addEventListener("keydown", onKeyDown);
+	window.addEventListener("keyup", onKeyUp);
+	canvas.style.backgroundColor = "linen";
+		
+	initGame();
+	
+	function initGame()
+	{
+		player.img = new Image();
+		player.img.src = "Mario.png";
+		player.x = canvas.width/2; //Can be changed when we decide where to start, AZ
+		player.y = canvas.height/2; //Same as line above, AZ
+		uIval = setInterval(update, 33.34);
+	}
+	
+	function onKeyDown(event)
+	{
+		switch(event.keyCode)
+		{
+			case 65: //a
+				leftPressed = true;
+				player.img.src = "MarioL.png";
+				LastLoc = 0;
+				break;
+			case 68: //d
+				rightPressed = true;
+				player.img.src = "Mario.png";
+				LastLoc = 1;
+				break;
+			case 87: //w
+				upPressed = true;
+				//Need to add an up image here, AZ
+				LastLoc = 2;
+				break;
+			case 83: //s
+				downPressed = true;
+				LastLoc = 3;
+				// Need to add a down image here, AZ
+				break;	
+		}
+	}
+	
+	function onKeyUp(event)
+	{
+		switch(event.keyCode)
+		{
+			case 65: //a
+				leftPressed = false;
+				break;
+			case 68: //d
+				rightPressed = false;
+				break;
+			case 87: //w
+				upPressed = false;
+				break;
+			case 83: //s
+				downPressed = false;
+				break;	
+		}
+	}
+	
+	function update()
+	{
+		movePlayer();
+		animatePlayer();
+		render();
+	}
+	
+	function movePlayer()
+	{
+		if (leftPressed == true)
+			player.x -= player.speed;
+		else if (rightPressed == true)
+			player.x += player.speed;
+		if (upPressed == true)
+			player.y -= player.speed;
+		else if (downPressed == true)
+			player.y += player.speed;
+	}
+	
+	function animatePlayer()
+	{
+		if (leftPressed || rightPressed || upPressed || downPressed )
+		{
+			if (frameCtr == ctrMax)
+			{
+				frameCtr = 0;
+				spriteIdx++;
+				if (spriteIdx == idxMax)
+					spriteIdx = 0;
+			}
+			frameCtr++;
+		}
+	}
+	
+	
+	function render() 
+	{
+		surface.clearRect(0,0,canvas.width, canvas.height);
+		surface.drawImage(player.img, 
+						  spriteIdx*32,0,32,32,  // src rect. 
+						  player.x,player.y,64,64); // dest rect.
+	}
+	
+</script>
+
+</body>
+</html>
+
+
